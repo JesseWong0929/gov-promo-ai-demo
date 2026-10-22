@@ -1456,7 +1456,7 @@
       <aside class="evidence" aria-label="验收证据">
         <section class="evidence-section">
           <h2>可信状态</h2>
-          <p class="shot-caption">Demo 修复版：2026-10-22。本次本地自动化回归 235 项通过；以下 Coze 状态为历史核验记录，并非今日生产复验结果。</p>
+          <p class="shot-caption">Demo 修复版：2026-10-22 r2。本次本地自动化回归 235 项通过；以下 Coze 状态为历史核验记录，并非今日生产复验结果。</p>
           <div class="feature-state">诊断路由修复版已部署；会议执行 + 组织记忆仅本地实现，当前 Coze 生产未接入。</div>
           <dl class="facts">
             <div><dt>企业生产</dt><dd>86fe5787af（仅诊断修复）</dd></div>
@@ -2047,10 +2047,14 @@
 
         // 输入框离开焦点时，把越界数值写回上下限，避免"框里写 99999、表里按 500 算"。
         [qLength, qHeight, qBoards, schBuffer].forEach(function (control) {
-          control.addEventListener("change", function () {
+          function normalizeControl() {
             var fixed = clampInput(control, Number(control.min) || 0);
             if (String(fixed) !== control.value) control.value = String(fixed);
-          });
+            if (control === schBuffer) renderSchedule();
+            else renderQuote();
+          }
+          control.addEventListener("change", normalizeControl);
+          control.addEventListener("blur", normalizeControl);
         });
 
         var rText = document.getElementById("rText");
